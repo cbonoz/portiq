@@ -24,8 +24,8 @@
 
     <!-- Fragment Headings -->
     <string name="heading_profile">Profile</string>
-    <string name="heading_order">My Shipments</string>
-    <string name="heading_calendar">My Calendar</string>
+    <string name="heading_portlist">My Ports</string>
+    <string name="heading_history">My History</string>
 
     <string name="title_activity_splash">SplashActivity</string>
     <string name="dummy_button">Dummy Button</string>

@@ -16,6 +16,10 @@ mysql.init_app(app)
 def hello():
     return json.dumps({'data':'hello world!'})
 
+@app.route('/getPorts')
+def getPorts():
+    return json.dumps({'data': [1,2,3]})
+
 if __name__ == "__main__":
     app.run(port=5002)
 

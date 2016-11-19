@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="#ffffff"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:textSize="24sp"
+        android:layout_marginTop="5dp"
+        android:text="Scheduled Orders"
+        android:gravity="center"
+        />
+    <Button
+        android:layout_width="200dp"
+        android:text="Refresh Ports"
+        android:id="@+id/refresh_button"
+        android:gravity="center"
+        android:layout_height="50dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <ProgressBar
+        android:layout_width="40dp"
+        android:id="@+id/port_spinner"
+        android:layout_marginEnd="5dp"
+        android:layout_marginTop="25dp"
+        android:layout_height="40dp"
+        android:visibility="invisible"
+        android:layout_alignBottom="@+id/email_sign_in_button"
+        style="@android:style/Widget.ProgressBar.Large"
+        android:layout_centerHorizontal="true" />
+
+    <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    </RelativeLayout>
+</LinearLayout>

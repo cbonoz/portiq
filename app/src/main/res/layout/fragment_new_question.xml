@@ -1,0 +1,86 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.twowords.www.twowords.fragment.NewQuestionFragment">
+
+
+    <TextView
+        android:text="New Question"
+        android:textSize="28sp"
+        android:layout_margin="20dp"
+        android:textColor="@color/cardview_dark_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        />
+
+    <EditText
+        android:id="@+id/field_answer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:hint="Answer (two words separated by space)"
+        android:maxLines="1"
+        android:layout_marginTop="47dp"
+        android:layout_below="@+id/field_body"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:id="@+id/field_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:hint="Write your question..."
+        android:inputType="textMultiLine"
+        android:maxLines="10"
+        android:scrollHorizontally="false"
+        android:layout_marginTop="51dp"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentStart="true" />
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fab_submit_question"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@drawable/ic_navigation_check_24"-->
+        <!--android:layout_marginLeft="16dp"-->
+        <!--android:layout_marginRight="16dp"-->
+        <!--android:layout_marginTop="90dp"-->
+        <!--android:layout_below="@+id/field_answer"-->
+        <!--android:layout_centerHorizontal="true"/>-->
+
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/field_answer"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="32dp">
+
+        <ProgressBar
+            android:layout_width="40dp"
+            android:id="@+id/question_spinner"
+            android:layout_marginEnd="5dp"
+            android:layout_height="40dp"
+            android:visibility="invisible"
+            android:layout_alignBottom="@+id/question_button"
+            style="@android:style/Widget.ProgressBar.Small"
+            android:layout_centerHorizontal="true" />
+        <Button
+            android:text="Submit"
+            android:layout_width="200dp"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_height="wrap_content"
+            android:id="@+id/question_button"
+            android:layout_marginTop="97dp"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

@@ -1,15 +1,10 @@
 #!/usr/local/bin/python3
 
-from sys import platform
-if platform == "linux" or platform == "linux2":
-    #!/usr/bin/python3
-elif platform == "darwin":
-    #!/usr/local/bin/python3
-elif platform == "win32":
+
 
 from flask import Flask, render_template, json, request
 from flaskext.mysql import MySQL
-from flask_cors import CORS, cross_origin
+#from flask_cors import CORS, cross_origin
 
 #import os
 #import decimal
@@ -36,10 +31,27 @@ def decimal_default(obj):
 
 
 # TODO: Add routes for shipping manifest updates and retrievals.
-@app.route('/hello')
-#@cross_origin()
+@app.route('/hello', methods=['GET', 'POST'])
 def hello():
-  return json.dumps({'data':'hello world!'})
+  try:
+    cursor = mysql.connect().cursor()
+    cursor.execute("select * from portiq.data limit 1")
+    hello = cursor.fetchall()
+    return json.dumps({'data': hello})
+  except Exception as e:
+    return(str(e))  
+
+@app.route('/signin', methods=['POST'])
+def signin():
+  cursor = mysql.connect().cursor()
+  try:
+    email = request.form.get('email', default=None, type=str)
+    passwd = request.form.get('password', default=None, type=str)
+    cursor.execute("Select idUser from portiq.Users WHERE email = \'{0}\' and password = \'{1}\'".format(email, passwd))
+    UID = cursor.fetchone()
+    return json.dumps({'UID': UID})
+  except Exception as e:
+    return(str(e))
 
 @app.route('/getSchedule', methods=['POST'])
 #@cross_origin()
@@ -49,18 +61,25 @@ def getSchedule():
     CID = request.form.get('company', default=None, type=str)
     Date = request.form.get('date', default=None, type=str)
     port = request.form.get('port', default=None, type=str)
-    cursor.execute('select * from portiq.data WHERE Unload_Port =\'{}\';'.format(port))
-    data = cursor.fetchall()
+
+    if Date != None:
+      cursor.execute("select Unload_Port, Container, Estimated_Vessel_Arrival from portiq.data WHERE Estimated_Vessel_Arrival =\'{}\';".format(date))
+      data = cursor.fetchall()
+
+    if port != None:
+      cursor.execute("select Container, Estimated_Vessel_Arrival, Estimated_Ship_Departure from portiq.data WHERE Unload_Port Like\'{}\';".format(port))
+      data = cursor.fetchall()
     return json.dumps({'data': data})
   except Exception as e:
     return(str(e))
 
 
 
-@app.route('/getPorts')
+@app.route('/getPorts', methods=['POST'])
 #@cross_origin()
 def getPorts():
-    return json.dumps({'data': [1,2,3]})
+  port = request.form.get('port', default=None, type=str)
+  return json.dumps({'data': port})
 
 
 @app.route('/getData')
@@ -72,9 +91,6 @@ def getExampleData():
   return json.dumps({'data': data}, default=decimal_default)
 
 
-@app.route('/getPorts')
-def getPorts():
-    return json.dumps({'data': [1,2,3]})
 
 if __name__ == "__main__":
     app.run(port=9003)

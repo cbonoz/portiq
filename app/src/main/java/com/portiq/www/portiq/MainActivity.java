@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements
                 }
 
                 if (user.equals("")) {
-                    user = "Chris";
+                    user = "Chris B.";
                 }
 
 

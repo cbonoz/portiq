@@ -17,18 +17,26 @@
         android:gravity="center"
         />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:textSize="16sp"
+        android:layout_marginTop="35dp"
+        android:text="Scheduled events in the next 3 days"
+        android:gravity="center"
+        />
+
     <View android:id="@+id/primerdivisor"
         android:layout_height="2dp"
         android:layout_width="fill_parent"
         android:background="#000000" />
-
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list"
         android:name="com.portiq.www.portiq.PortScheduleFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="70dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
@@ -41,7 +49,7 @@
         android:layout_width="40dp"
         android:id="@+id/port_spinner"
         android:layout_marginEnd="5dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="200dp"
         android:layout_height="40dp"
         android:visibility="invisible"
         style="@android:style/Widget.ProgressBar.Large"

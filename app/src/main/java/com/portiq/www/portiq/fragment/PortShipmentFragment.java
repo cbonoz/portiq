@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.portiq.www.portiq.R;
 import com.portiq.www.portiq.listcontent.ShipmentContent;
@@ -21,6 +22,9 @@ import com.portiq.www.portiq.listcontent.SimpleDivider;
 import com.portiq.www.portiq.models.PortShipmentRecyclerViewAdapter;
 import com.portiq.www.portiq.models.Shipment;
 import com.portiq.www.portiq.services.WebService;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +41,8 @@ public class PortShipmentFragment extends Fragment {
 
     // TODO: Customize parameters
     private int mColumnCount = 1;
+
+    private String portName;
 
     private OnListFragmentInteractionListener mListener;
 
@@ -84,10 +90,30 @@ public class PortShipmentFragment extends Fragment {
 
             List<String> shipmentData;
             shipments.clear();
+            success = false;
             if (success) {
 //                ports = intent.getStringArrayListExtra("ports");
                 // TODO: Parse the data into a string array of shipments, and add to shipments array..
                 shipmentData = new ArrayList<>();
+                try {
+                    JSONObject jsonObject = new JSONObject(data);
+                    JSONArray shipmentArray = jsonObject.getJSONArray("data");
+//                    Log.d(TAG, "shipmentArray: " + shipmentArray.toString());
+                    for(int i=0;i<shipmentArray.length();i++) {
+//                        JSONArray p = (JSONArray) shipmentArray.get(i);
+//                        String scheduleEntry = p.toString().replace("[","").replace("]","");
+//                        List<String> items = Arrays.asList(scheduleEntry.split("\\s*,\\s*"));
+//                        Log.d(TAG, "items: " + items.toString());
+//                        Shipment s = new Shipment(items.get(2), items.get(1), items.get(0));
+//                        shipments.add(s);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getActivity(), "Error fetching schedule", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
 
             } else {
                 List<String> cNum = Arrays.asList("1233241", "23421425", "241241234");
@@ -95,7 +121,7 @@ public class PortShipmentFragment extends Fragment {
                 List<String> timeOut = Arrays.asList("11/20/16 10:30am", "11/21/16 11:30am", "11/22/16 12:30am");
 
                 for (int i = 0; i < cNum.size(); i++) {
-                    Shipment s = new Shipment(cNum.get(i), timeIn.get(i), timeOut.get(i));
+                    Shipment s = new Shipment(cNum.get(i), timeIn.get(i), timeOut.get(i), portName);
                     shipments.add(s);
                 }
 //                shipmentData = Arrays.asList("shipment A", "shipment B", "shipment C");
@@ -110,7 +136,6 @@ public class PortShipmentFragment extends Fragment {
         }
     };
 
-    private String portName;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

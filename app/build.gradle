@@ -65,3 +65,6 @@ dependencies {
 dependencies {
     compile 'com.android.support:support-v4:24.+'
 }
+dependencies {
+    compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
+}

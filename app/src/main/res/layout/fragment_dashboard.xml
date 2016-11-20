@@ -73,6 +73,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:id="@+id/name"
+        android:textStyle="bold"
         android:layout_above="@+id/company"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"

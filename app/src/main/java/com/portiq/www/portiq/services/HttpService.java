@@ -15,8 +15,8 @@ import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.logging.HttpLoggingInterceptor;
 
 import static android.R.attr.action;
 import static android.content.ContentValues.TAG;
@@ -36,8 +36,20 @@ public class HttpService extends IntentService {
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
 
+    private static OkHttpClient client = new OkHttpClient();
+
     public HttpService() {
         super("HttpService");
+    }
+
+    private String post(String url, String json) throws IOException {
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+        Response response = client.newCall(request).execute();
+        return response.body().string();
     }
 
     @Override
@@ -45,15 +57,6 @@ public class HttpService extends IntentService {
         Log.d(TAG, "onHandleIntent Action: " + action);
         if (intent != null) {
             final String action = intent.getAction();
-            OkHttpClient.Builder builder = new OkHttpClient.Builder();
-
-            HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-
-// Can be Level.BASIC, Level.HEADERS, or Level.BODY
-// See http://square.github.io/okhttp/3.x/logging-interceptor/ to see the options.
-            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
-            builder.networkInterceptors().add(httpLoggingInterceptor);
-            OkHttpClient client = builder.build();
             final Request request;
             final String company = UserInfo.currentUser.company;
             switch (action) {
@@ -63,7 +66,6 @@ public class HttpService extends IntentService {
                     URL portUrl = new URL(PORT_API);
                     request = new Request.Builder()
                             .url(portUrl)
-                            .get()
                             .build();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -78,7 +80,6 @@ public class HttpService extends IntentService {
                         URL scheduleUrl = new URL(SCHEDULE_API);
                         request = new Request.Builder()
                                 .url(scheduleUrl)
-                                .get()
                                 .build();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -90,13 +91,20 @@ public class HttpService extends IntentService {
                     return;
             }
 
+//            try {
+//                String response = post(action, "");
+//                Log.d(TAG, response);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+
             // Run the http request.
             client.newCall(request).enqueue(new Callback() {
 
                 // Failure case
                 @Override
                 public void onFailure(Call call, IOException e) {
-                    Log.e(TAG, action + " request failed.");
+                    Log.e(TAG, call.request() + " request failed.");
                     e.printStackTrace();
                     final Intent i;
                     switch (action) {
@@ -109,7 +117,6 @@ public class HttpService extends IntentService {
                         default:
                             i = null;
                             break;
-
                     }
                     // Success will be interpreted as false
                     sendBroadcast(i);

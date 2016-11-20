@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.portiq.www.portiq.R;
 import com.portiq.www.portiq.UserInfo;
@@ -22,6 +23,9 @@ import com.portiq.www.portiq.listcontent.SimpleDivider;
 import com.portiq.www.portiq.models.MyPortRecyclerViewAdapter;
 import com.portiq.www.portiq.models.Port;
 import com.portiq.www.portiq.services.WebService;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,9 +60,22 @@ public class PortFragment extends Fragment {
             if (success) {
 //                ports = intent.getStringArrayListExtra("ports");
                 // TODO: Parse the data into a string array of ports
-                portData = new ArrayList<>();
+                try {
+                    JSONObject jsonObject = new JSONObject(data);
+                    JSONArray portArray=jsonObject.getJSONArray("data");
+                    portData = new ArrayList<>();
+                    for(int i=0;i<portArray.length();i++) {
+                        String p = (String) portArray.get(i);
+                        portData.add(p.replace("\"",""));
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
             } else {
                 portData = Arrays.asList("Laem Chabang", "Vung Tau", "Xiamen", "Tokyo", "Los Angeles", "Kobe", "Nagoya", "Shimizu", "Oakland", "Hong Kong");
+                Toast.makeText(getActivity(), "Check Internet Connection", Toast.LENGTH_SHORT).show();
             }
             ports.clear();
             for (String s : portData) {

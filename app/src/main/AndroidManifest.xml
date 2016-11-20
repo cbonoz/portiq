@@ -22,9 +22,7 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".services.WebService2"
-            android:exported="false" />
+
         <service
             android:name=".services.HttpService"
             android:exported="false"></service>

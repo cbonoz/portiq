@@ -46,7 +46,7 @@ public class ShipmentDetailFragment extends Fragment {
         containerText.setText("Container: " + shipment.containerNum);
         inText.setText("Planned Arrival: " + shipment.timeIn);
         outText.setText("Planned Departure" + shipment.timeOut);
-        nameText.setText("---");
+        nameText.setText(shipment.port + "\n---\n");
 
         btn = (Button) view.findViewById(R.id.back_button);
         btn.setOnClickListener(new View.OnClickListener() {

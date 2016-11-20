@@ -20,14 +20,28 @@ public class ParentPortFragment extends Fragment {
         // Required empty public constructor
     }
 
+//    private final Fragment[] mFragments = new Fragment[] {
+//            new PortFragment(),
+//            new PortShipmentFragment(),
+//            new ShipmentDetailFragment()
+//    };
+
+    private void loadFragmentIndex(Fragment fragment) {
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
+//        if (!fragment.isAdded()) {
+//            transaction.add(R.id.parent_port_container, fragment).commit();
+//        } else {
+        transaction.replace(R.id.parent_port_container, fragment).commit();
+
+    }
+
     public void launchScheduleFragment(String portName) {
         Fragment newFragment = new PortShipmentFragment();
         Bundle bundle=new Bundle();
         bundle.putString("port", portName);
         newFragment.setArguments(bundle);
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-        transaction.replace(R.id.parent_port_container, newFragment).commit();
+        loadFragmentIndex(newFragment);
     }
 
     public void launchDetailFragment(Shipment shipment) {
@@ -35,20 +49,12 @@ public class ParentPortFragment extends Fragment {
         Bundle bundle = new Bundle();
         bundle.putSerializable("shipment", shipment);
         newFragment.setArguments(bundle);
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
-        transaction.replace(R.id.parent_port_container, newFragment).commit();
+        loadFragmentIndex(newFragment);
     }
 
     public void launchPortFragment() {
         Fragment newFragment = new PortFragment();
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        if (!newFragment.isAdded()) {
-            transaction.add(R.id.parent_port_container, newFragment).commit();
-        } else {
-            transaction.replace(R.id.parent_port_container, newFragment).commit();
-        }
-
+        loadFragmentIndex(newFragment);
     }
 
 

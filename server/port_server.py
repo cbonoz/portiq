@@ -1,5 +1,12 @@
 #!/usr/local/bin/python3
 
+from sys import platform
+if platform == "linux" or platform == "linux2":
+    #!/usr/bin/python3
+elif platform == "darwin":
+    #!/usr/local/bin/python3
+elif platform == "win32":
+
 from flask import Flask, render_template, json, request
 from flaskext.mysql import MySQL
 from flask_cors import CORS, cross_origin

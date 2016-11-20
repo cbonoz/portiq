@@ -8,15 +8,31 @@ import java.io.Serializable;
 
 public class Shipment implements Serializable {
 
+    public String name;
     public String containerNum;
     public String timeIn;
     public String timeOut;
-    public String shipmentType; // arrive or depart
+//    public String shipmentType; // arrive or depart
 
-    public Shipment(String timeIn, String containerNum, String shipmentType, String timeOut) {
-        this.timeIn = timeIn;
+    public Shipment( String containerNum, String timeIn, String timeOut) {
         this.containerNum = containerNum;
-        this.shipmentType = shipmentType;
+        this.timeIn = timeIn;
         this.timeOut = timeOut;
+    }
+
+//    public Shipment(String name) {
+//        this.name = name + "11";
+//    }
+
+    public Shipment(String container) {
+        this.containerNum = container;
+        this.timeIn = "";
+        this.timeOut = "";
+    }
+
+    @Override
+    public String toString() {
+     return containerNum + ": " + timeIn + " -> " + timeOut;
+//        return name;
     }
 }

@@ -23,7 +23,7 @@
     <string name="enter_question">Enter Question and Answer fields</string>
 
     <!-- Fragment Headings -->
-    <string name="heading_profile">Profile</string>
+    <string name="heading_dashboard">Dashboard</string>
     <string name="heading_portlist">My Ports</string>
     <string name="heading_history">My History</string>
 
@@ -58,6 +58,9 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+
+    <string name="action_bill_of_lading">Add Bill Of Lading</string>
+    <string name="action_new_vendor">Add Trucking Company</string>
 
 
 </resources>

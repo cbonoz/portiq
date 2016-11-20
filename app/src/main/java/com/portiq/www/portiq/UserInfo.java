@@ -1,5 +1,6 @@
 package com.portiq.www.portiq;
 
+import com.portiq.www.portiq.models.Shipment;
 import com.portiq.www.portiq.models.User;
 
 /**
@@ -10,6 +11,8 @@ public class UserInfo {
     private UserInfo() {
 
     }
+
+    public static Shipment selectedShipment = null;
 
     public static User currentUser = null;
 }

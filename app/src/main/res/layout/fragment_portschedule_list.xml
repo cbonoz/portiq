@@ -8,33 +8,34 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <TextView
+        android:id="@+id/port_text"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:textSize="24sp"
         android:layout_marginTop="5dp"
-        android:text="Ports"
+        android:text="Port Schedule"
         android:gravity="center"
         />
-
 
     <View android:id="@+id/primerdivisor"
         android:layout_height="2dp"
         android:layout_width="fill_parent"
         android:background="#000000" />
 
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list"
-        android:layout_marginTop="50dp"
-        android:name="com.portiq.www.portiq.PortFragment"
+        android:name="com.portiq.www.portiq.PortScheduleFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
         android:choiceMode="singleChoice"
         android:listSelector="@android:color/darker_gray"
-        tools:context="com.portiq.www.portiq.fragment.PortFragment"
-        tools:listitem="@layout/fragment_port" />
+        tools:context="com.portiq.www.portiq.fragment.PortScheduleFragment"
+        tools:listitem="@layout/fragment_portschedule" />
 
     <ProgressBar
         android:layout_width="40dp"

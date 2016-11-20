@@ -15,17 +15,79 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.portiq.www.portiq.fragment.DashboardFragment;
 import com.portiq.www.portiq.fragment.HistoryFragment;
-import com.portiq.www.portiq.fragment.PortListFragment;
-import com.portiq.www.portiq.fragment.ProfileFragment;
+import com.portiq.www.portiq.fragment.ParentPortFragment;
+import com.portiq.www.portiq.fragment.PortFragment;
+import com.portiq.www.portiq.fragment.PortShipmentFragment;
+import com.portiq.www.portiq.models.Port;
+import com.portiq.www.portiq.models.Shipment;
 import com.portiq.www.portiq.models.User;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+        PortFragment.OnListFragmentInteractionListener,
+        PortShipmentFragment.OnListFragmentInteractionListener {
+
+    @Override
+    public void onListFragmentInteraction(Port port) {
+        Log.d(TAG, "onListFragmentInteraction port: " + port);
+        Log.d(TAG, "Starting PostShipmentFragment with port: " + port.name);
+        // Create new fragment and transaction
+        ((ParentPortFragment) mPagerAdapter.getItem(0)).launchScheduleFragment(port.name);
+//        Fragment newFragment = new PortShipmentFragment();
+//        Bundle bundle=new Bundle();
+//        bundle.putString("port", port.name);
+//        newFragment.setArguments(bundle);
+////        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//        FragmentTransaction transaction = mPagerAdapter.getItem(0).getChildFragmentManager().beginTransaction();
+//        // Replace whatever is in the fragment_container view with this fragment,
+//        // and add the transaction to the back stack if needed
+//        try {
+//            transaction.remove(mPagerAdapter.getItem(0));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        transaction.replace(R.id.parent_port_container, newFragment);
+//        transaction.addToBackStack(null);
+//        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
+//        // Commit the transaction
+//        transaction.commit();
+    }
+
+    @Override
+    public void onListFragmentInteraction(Shipment shipment) {
+        Log.d(TAG, "onListFragmentInteraction shipment: " + shipment);
+        UserInfo.selectedShipment = shipment;
+        // TODO: Launch fragment from here.
+        // Create new fragment and transaction
+        ((ParentPortFragment) mPagerAdapter.getItem(0)).launchDetailFragment(shipment);
+//        Fragment newFragment = new ShipmentDetailFragment();
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable("shipment", shipment);
+//        newFragment.setArguments(bundle);
+//        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//        try {
+//            transaction.remove(mPagerAdapter.getItem(0));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+////        FragmentTransaction transaction = mPagerAdapter.getItem(0).getChildFragmentManager().beginTransaction();
+//        // Replace whatever is in the fragment_container view with this fragment,
+//        // and add the transaction to the back stack if needed
+//        transaction.replace(R.id.parent_port_container, newFragment);
+//        transaction.addToBackStack(null);
+//        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
+//        // Commit the transaction
+//        transaction.commit();
+
+    }
 
     private static final String TAG = "MainActivity";
 
     private FragmentPagerAdapter mPagerAdapter;
-    private ViewPager mViewPager;
+    public ViewPager mViewPager;
 
     private void loadMainUI() {
         setContentView(R.layout.activity_main);
@@ -33,17 +95,19 @@ public class MainActivity extends AppCompatActivity {
         // Create the adapter that will return a fragment for each section
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[] {
-                    new PortListFragment(),
-                    new ProfileFragment(),
+                    new ParentPortFragment(),
+                    new DashboardFragment(),
                     new HistoryFragment()
             };
             private final String[] mFragmentNames = new String[] {
                     getString(R.string.heading_portlist),
-                    getString(R.string.heading_profile),
+                    getString(R.string.heading_dashboard),
                     getString(R.string.heading_history)
             };
             @Override
             public Fragment getItem(int position) {
+
+
                 return mFragments[position];
             }
             @Override
@@ -74,6 +138,14 @@ public class MainActivity extends AppCompatActivity {
 
     private Handler handler = new Handler();
 
+    public void registerTextOnClick(View view) {
+        Log.d(TAG, "Click registerText");
+
+        companyText.setVisibility(View.VISIBLE);
+        positionText.setVisibility(View.VISIBLE);
+        Toast.makeText(MainActivity.this, "Enter Company and Position", Toast.LENGTH_SHORT).show();
+    };
+
     private void loadSignInUI() {
         setContentView(R.layout.activity_sign_in);
         userText = (EditText) findViewById(R.id.userid);
@@ -81,32 +153,32 @@ public class MainActivity extends AppCompatActivity {
         companyText = (EditText) findViewById(R.id.company);
         positionText = (EditText) findViewById(R.id.position);
         loginSpinner = (ProgressBar) findViewById(R.id.login_spinner);
-
         registerText = (TextView) findViewById(R.id.register_text);
-        registerText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Click registerText");
-                companyText.setVisibility(View.VISIBLE);
-                positionText.setVisibility(View.VISIBLE);
-            }
-        });
-
 
         loginButton = (Button) findViewById(R.id.email_sign_in_button);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name = userText.getText().toString();
-                String company = companyText.getText().toString();
+                String user = userText.getText().toString();
+                String company =  companyText.getText().toString();
                 String position = positionText.getText().toString();
 
+                if (company.equals("")) {
+                    company = "WidgetCo";
+                }
+
+                if (position.equals("")) {
+                    position = "Superadmin";
+                }
+
+                if (user.equals("")) {
+                    user = "Chris";
+                }
+
+
                 loginSpinner.setVisibility(View.VISIBLE);
-
-                UserInfo.currentUser = new User(name, "", position, company);
-
+                UserInfo.currentUser = new User(user, "", position, company);
                 Toast.makeText(MainActivity.this, "Logged In!", Toast.LENGTH_LONG).show();
-//                handler.postDelayed()
                 loadMainUI();
             }
         });
@@ -124,5 +196,6 @@ public class MainActivity extends AppCompatActivity {
             loadMainUI();
         }
     }
+
 
 }

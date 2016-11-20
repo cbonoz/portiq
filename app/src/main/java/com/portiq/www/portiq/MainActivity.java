@@ -7,15 +7,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.portiq.www.portiq.fragment.OrderFragment;
+import com.portiq.www.portiq.fragment.HistoryFragment;
+import com.portiq.www.portiq.fragment.PortListFragment;
 import com.portiq.www.portiq.fragment.ProfileFragment;
-import com.portiq.www.portiq.fragment.CalendarFragment;
 import com.portiq.www.portiq.models.User;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,30 +27,20 @@ public class MainActivity extends AppCompatActivity {
     private FragmentPagerAdapter mPagerAdapter;
     private ViewPager mViewPager;
 
-    protected User currentUser = null;
-
-    public User getCurrentUser() {
-        return currentUser;
-    }
-
-    public void setCurrentUser(User user) {
-        currentUser = user;
-    }
-
     private void loadMainUI() {
         setContentView(R.layout.activity_main);
 
         // Create the adapter that will return a fragment for each section
         mPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
             private final Fragment[] mFragments = new Fragment[] {
+                    new PortListFragment(),
                     new ProfileFragment(),
-                    new OrderFragment(),
-                    new CalendarFragment()
+                    new HistoryFragment()
             };
             private final String[] mFragmentNames = new String[] {
+                    getString(R.string.heading_portlist),
                     getString(R.string.heading_profile),
-                    getString(R.string.heading_order),
-                    getString(R.string.heading_calendar)
+                    getString(R.string.heading_history)
             };
             @Override
             public Fragment getItem(int position) {
@@ -74,7 +66,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText userText;
     private EditText companyText;
     private EditText passText;
-    private EditText roleText;
+    private EditText positionText;
+
+    private TextView registerText;
 
     private ProgressBar loginSpinner;
 
@@ -85,9 +79,19 @@ public class MainActivity extends AppCompatActivity {
         userText = (EditText) findViewById(R.id.userid);
         passText = (EditText) findViewById(R.id.password);
         companyText = (EditText) findViewById(R.id.company);
-        roleText = (EditText) findViewById(R.id.position);
+        positionText = (EditText) findViewById(R.id.position);
         loginSpinner = (ProgressBar) findViewById(R.id.login_spinner);
-//        companyText = (EditText)
+
+        registerText = (TextView) findViewById(R.id.register_text);
+        registerText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Click registerText");
+                companyText.setVisibility(View.VISIBLE);
+                positionText.setVisibility(View.VISIBLE);
+            }
+        });
+
 
         loginButton = (Button) findViewById(R.id.email_sign_in_button);
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -95,12 +99,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String name = userText.getText().toString();
                 String company = companyText.getText().toString();
-                String position = roleText.getText().toString();
+                String position = positionText.getText().toString();
 
                 loginSpinner.setVisibility(View.VISIBLE);
 
-                User u = new User(name, "", position, company);
-                setCurrentUser(u);
+                UserInfo.currentUser = new User(name, "", position, company);
+
                 Toast.makeText(MainActivity.this, "Logged In!", Toast.LENGTH_LONG).show();
 //                handler.postDelayed()
                 loadMainUI();
@@ -114,10 +118,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO: Add registration.
-        setCurrentUser(null);
-
-        if (currentUser == null) {
+        if (UserInfo.currentUser == null) {
             loadSignInUI();
         } else {
             loadMainUI();

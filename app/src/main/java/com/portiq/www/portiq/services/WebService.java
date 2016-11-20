@@ -16,8 +16,9 @@ import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static android.R.attr.action;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -34,29 +35,19 @@ public class WebService extends IntentService {
             = MediaType.parse("application/json; charset=utf-8");
 
     private static final String BASE_URL = "http://198.58.123.202:9001"; // formerly localhost
-
-    private static final String SHIPMENTS_API = BASE_URL + "/shipments";
-    private static final String CALENDAR_API = BASE_URL + "/schedule";
-    private static final String GET_USER_QUESTIONS_API = BASE_URL + "/questions";
-    private static final String SET_USER_API = BASE_URL + "/user/set";
-
-
+    private static final String SCHEDULE_API = BASE_URL + "/getSchedule";
+    private static final String PORT_API = BASE_URL + "/getPorts";
 
     public WebService() {
         super("WebService");
     }
 
-    /**
-     * Starts this service to perform action Baz with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    public static void getShipments(Context context, int questionId) {
+    public static void getPorts(Context context, String company) {
         Intent intent = new Intent(context, WebService.class);
-        intent.setAction(SHIPMENTS_API);
-        intent.putExtra("id", questionId);
+        intent.setAction(PORT_API);
+        intent.putExtra("company", company);
         context.startService(intent);
+        Log.d(TAG, "getPorts");
     }
 
     /**
@@ -65,23 +56,14 @@ public class WebService extends IntentService {
      *
      * @see IntentService
      */
-    public static void getCalendar(Context context, User user) {
-        Intent intent = new Intent(context, WebService.class);
-        intent.setAction(CALENDAR_API);
-        intent.putExtra("user", user);
-        context.startService(intent);
-    }
+    public static void getShipments(Context context, String portId) {
+        if (portId == null) {
+            return;
+        }
 
-    /**
-     * Starts this service to perform action Baz with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    public static void setUser(Context context, User user) {
         Intent intent = new Intent(context, WebService.class);
-        intent.setAction(GET_USER_QUESTIONS_API);
-        intent.putExtra("user", user);
+        intent.setAction(SCHEDULE_API);
+        intent.putExtra("id", portId);
         context.startService(intent);
     }
 
@@ -90,24 +72,25 @@ public class WebService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.d(TAG, "onHandleIntent Action: " + action);
         if (intent != null) {
             final String action = intent.getAction();
-            Log.d(TAG, "onHandleIntent Action: " + action);
+
             User user;
             final Request request;
             switch (action) {
-                case CALENDAR_API:
+                case PORT_API:
                     user = (User) intent.getSerializableExtra("user");
                     request = new Request.Builder()
-                            .url(CALENDAR_API + "/" + user.user)
+                            .url(PORT_API + "/" + user.company)
                             .get()
                             .build();
                     break;
-                case SHIPMENTS_API:
-                    user = (User) intent.getSerializableExtra("user");
+                case SCHEDULE_API:
+                    //                            .post(RequestBody.create(JSON, gsonObj.toJson(user)))
                     request = new Request.Builder()
-                            .url(SHIPMENTS_API)
-                            .post(RequestBody.create(JSON, gsonObj.toJson(user)))
+                            .url(SCHEDULE_API)
+                            .post(null)
                             .build();
                     break;
                 default:
@@ -117,17 +100,27 @@ public class WebService extends IntentService {
 
             // Run the http request.
             client.newCall(request).enqueue(new Callback() {
+
+                // Failure case
                 @Override
                 public void onFailure(Call call, IOException e) {
                     Log.e(TAG, action + " request failed.");
                     e.printStackTrace();
-                    Intent i;
+                    final Intent i;
                     switch (action) {
-                        case SHIPMENTS_API:
-//                            i = new Intent().setAction("addQuestion");
-//                            sendBroadcast(i);
+                        case SCHEDULE_API:
+                            i = new Intent().setAction("getSchedule");
                             break;
+                        case PORT_API:
+                            i = new Intent().setAction("getPorts");
+                            break;
+                        default:
+                            i = null;
+                            break;
+
                     }
+                    // Success will be interpreted as false
+                    sendBroadcast(i);
                 }
 
                 @Override
@@ -145,13 +138,19 @@ public class WebService extends IntentService {
                     // TODO: Add action-specific response behavior here.
                     Intent i = null;
                     switch (action) {
-                        case SHIPMENTS_API:
-//                            i = new Intent().setAction("setUser");
-
+                        case SCHEDULE_API:
+                            i = new Intent().setAction("getSchedule");
+                            i.putExtra("data", responseStr);
+                            break;
+                        case PORT_API:
+                            i = new Intent().setAction("getPorts");
+                            i.putExtra("data", responseStr);
+                            break;
                         default:
                             Log.d(TAG, "onResponse done: " + action);
                             break;
                     }
+
                     if (i != null) {
                         // If we got here, then the response is valid.
                         i.putExtra("success", true);

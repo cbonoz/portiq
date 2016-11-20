@@ -3,11 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list"
-    android:name="com.quotify.www.quotify.LeaderboardFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
-    app:layoutManager="LinearLayoutManager"
-    tools:context="com.quotify.www.quotify.fragment.LeaderboardFragment"
-    tools:listitem="@layout/fragment_user" />
+    app:layoutManager="LinearLayoutManager" />

@@ -59,7 +59,7 @@ def getSchedule():
   cursor = mysql.connect().cursor()
   try:
     date = request.form.get('date')
-    cursor.execute("select * from portiq.data WHERE Estimated_Vessel_Arrival LIKE \"{}\";".format(date))
+    cursor.execute("SELECT * from portiq.data WHERE Estimated_Vessel_Arrival LIKE {};".format(date))
     data = cursor.fetchall()
     return json.dumps({'data': data})
   except Exception as e:
@@ -78,13 +78,29 @@ def getPorts():
   except Exception as e:
     return(str(e))
 
-@app.route('/getData')
+@app.route('/getBOL', methods=['POST'])
+#@cross_origin()
+def getBOL():
+  cursor = mysql.connect().cursor()
+  try:
+    bol = request.form.get('bol', default=None, type=str)
+    cursor = mysql.connect().cursor()
+    cursor.execute("select * from portIQ.data where Bill_of_Lading = \'{}\'".format(bol))
+    data = cursor.fetchall()
+    return json.dumps({'data': data})
+  except Exception as e:
+    return(str(e))
+
+@app.route('/getData', methods=['POST'])
 #@cross_origin()
 def getExampleData():
   cursor = mysql.connect().cursor()
-  cursor.execute("select * from data limit 10")
-  data = cursor.fetchall()
-  return json.dumps({'data': data}, default=decimal_default)
+  try:
+    cursor.execute("select * from data limit 10")
+    data = cursor.fetchall()
+    return json.dumps({'data': data}, default=decimal_default)
+  except Exception as e:
+    return(str(e))
 
 @app.route('/setBOL', methods=['POST'])
 def setBOL():

@@ -1,15 +1,10 @@
 #!/usr/local/bin/python3
 
-from sys import platform
-if platform == "linux" or platform == "linux2":
-    #!/usr/bin/python3
-elif platform == "darwin":
-    #!/usr/local/bin/python3
-elif platform == "win32":
+
 
 from flask import Flask, render_template, json, request
 from flaskext.mysql import MySQL
-from flask_cors import CORS, cross_origin
+#from flask_cors import CORS, cross_origin
 
 #import os
 #import decimal
@@ -36,45 +31,87 @@ def decimal_default(obj):
 
 
 # TODO: Add routes for shipping manifest updates and retrievals.
-@app.route('/hello')
-#@cross_origin()
+@app.route('/hello', methods=['GET', 'POST'])
 def hello():
-  return json.dumps({'data':'hello world!'})
-
-@app.route('/getSchedule', methods=['POST'])
-#@cross_origin()
-def getSchedule():
   try:
     cursor = mysql.connect().cursor()
-    CID = request.form.get('company', default=None, type=str)
-    Date = request.form.get('date', default=None, type=str)
-    port = request.form.get('port', default=None, type=str)
-    cursor.execute('select * from portiq.data WHERE Unload_Port =\'{}\';'.format(port))
+    cursor.execute("select * from portiq.data limit 1")
+    hello = cursor.fetchall()
+    return json.dumps({'data': hello})
+  except Exception as e:
+    return(str(e))  
+
+@app.route('/signin', methods=['POST'])
+def signin():
+  cursor = mysql.connect().cursor()
+  try:
+    email = request.form.get('email', default=None, type=str)
+    passwd = request.form.get('password', default=None, type=str)
+    cursor.execute("Select idUser from portiq.Users WHERE email = \'{0}\' and password = \'{1}\';".format(email, passwd))
+    UID = cursor.fetchone()
+    return json.dumps({'UID': UID})
+  except Exception as e:
+    return(str(e))
+
+
+@app.route('/getSchedule', methods=['POST'])
+def getSchedule():
+  cursor = mysql.connect().cursor()
+  try:
+    date = request.form.get('date')
+    cursor.execute("SELECT * from portiq.data WHERE Estimated_Vessel_Arrival LIKE {};".format(date))
     data = cursor.fetchall()
     return json.dumps({'data': data})
   except Exception as e:
     return(str(e))
 
 
-
-@app.route('/getPorts')
+@app.route('/getPorts', methods=['POST'])
 #@cross_origin()
 def getPorts():
-    return json.dumps({'data': [1,2,3]})
+  cursor = mysql.connect().cursor()
+  try:
+    port = request.form.get('port', default=None, type=str)
+    cursor.execute("select Container, Estimated_Vessel_Arrival from portiq.data WHERE Unload_Port =\'{}\';".format(port))
+    data = cursor.fetchall()
+    return json.dumps({'data': data})
+  except Exception as e:
+    return(str(e))
 
+@app.route('/getBOL', methods=['POST'])
+#@cross_origin()
+def getBOL():
+  cursor = mysql.connect().cursor()
+  try:
+    bol = request.form.get('bol', default=None, type=str)
+    cursor = mysql.connect().cursor()
+    cursor.execute("select * from portIQ.data where Bill_of_Lading = \'{}\'".format(bol))
+    data = cursor.fetchall()
+    return json.dumps({'data': data})
+  except Exception as e:
+    return(str(e))
 
-@app.route('/getData')
+@app.route('/getData', methods=['POST'])
 #@cross_origin()
 def getExampleData():
   cursor = mysql.connect().cursor()
-  cursor.execute("select * from data limit 1")
-  data = cursor.fetchall()
-  return json.dumps({'data': data}, default=decimal_default)
+  try:
+    cursor.execute("select * from data limit 10")
+    data = cursor.fetchall()
+    return json.dumps({'data': data}, default=decimal_default)
+  except Exception as e:
+    return(str(e))
 
+@app.route('/setBOL', methods=['POST'])
+def setBOL():
+  try:
+    cursor = mysql.connect().cursor()
+    CID = request.form.get('company', default=None, type=str)
+    BOL = request.form.get('BOL', default=None, type=str)
+    cursor.execute('INSERT INTO portiq.BillOfLaden (CompanyID, Bill_of_Lading) VALUES (\'{}\',\'{}\');'.format(CID, BOL))
+  except Exception as e:
+    return(str(e))
 
-@app.route('/getPorts')
-def getPorts():
-    return json.dumps({'data': [1,2,3]})
 
 if __name__ == "__main__":
     app.run(port=9003)
